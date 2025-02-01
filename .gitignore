@@ -1,0 +1,43 @@
+# .gitignore
+
+# Archivos de entorno
+.env
+
+# Archivos específicos de la base de datos y generación de datos
+db-tests/generate_data.py
+
+# Resultados de Allure (solo si usas Allure como reporte)
+allure-results/
+
+# Resultados generados por Playwright
+test-results/
+
+# Directorio de dependencias de Node.js
+node_modules/
+
+# Archivos de logs de npm/yarn
+npm-debug.log
+yarn-error.log
+
+# Archivos de bloqueo de dependencias
+package-lock.json
+yarn.lock
+
+# Archivos específicos del sistema operativo (si usas macOS o Windows)
+.DS_Store         # macOS
+Thumbs.db         # Windows
+
+# Archivos generados por editor/IDE (VSCode, WebStorm, etc.)
+.vscode/
+.idea/
+
+# Archivos generados por test coverage (si usas cobertura de código)
+coverage/
+
+# Archivos de configuración de Playwright
+playwright-report/
+
+# Archivos temporales de editores
+*.swp
+*~
+
