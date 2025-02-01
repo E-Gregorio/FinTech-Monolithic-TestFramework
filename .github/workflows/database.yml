@@ -64,9 +64,9 @@ jobs:
         pytest --alluredir=allure-results
         allure serve allure-results  # Esto inicia el servidor Allure localmente en el runner
 
-    - name: Upload Allure report to GitHub Actions
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: allure-report
-        path: allure-results
+        - name: Upload Allure report to GitHub Actions
+        if: always()
+        uses: actions/upload-artifact@v2  # Actualiza a v2 o la última versión estable
+        with:
+          name: allure-report
+          path: allure-results
