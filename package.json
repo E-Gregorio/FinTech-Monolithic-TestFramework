@@ -1,6 +1,6 @@
 {
-  "devDependencies": {
-    "@playwright/test": "1.50.1",
-    "allure-playwright": "2.32.0"
+  "dependencies": {
+    "playwright": "^1.50.1",
+    "allure-js-commons": "^2.10.0"  
   }
 }

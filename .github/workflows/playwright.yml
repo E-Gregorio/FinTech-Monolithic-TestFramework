@@ -2,7 +2,7 @@ name: Playwright Test Workflow
 
 on:
   push:
-    branches: [ "main", "master", "develop" ]  # Definir las ramas donde se ejecutarán las pruebas
+    branches: [ "main", "master", "develop" ]
   pull_request:
     branches: [ "main", "master", "develop" ]
   schedule:
@@ -33,12 +33,12 @@ jobs:
     - name: Install dependencies
       run: |
         npm install
-        npm install allure-playwright  # Asegúrate de instalar Allure Playwright si no está instalado
+        npm install allure-js-commons  # Instalar allure-js-commons para los reportes
 
-    # Paso 4: Ejecutar pruebas de Playwright con el reporte Allure
+    # Paso 4: Ejecutar pruebas de Playwright con allure-js-commons
     - name: Run Playwright tests with Allure reporter
       run: |
-        npx playwright test --reporter=allure-playwright
+        npx playwright test --reporter=allure
 
     # Paso 5: Copiar los resultados generados por Allure
     - name: Copy Allure results
