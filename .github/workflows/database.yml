@@ -1,0 +1,72 @@
+name: Python CI/CD Pipeline with MySQL and Allure
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: 2722        # Contraseña de la base de datos 'root'
+          MYSQL_DATABASE: Bank             # Nombre de la base de datos
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'  # Usar la versión correcta de Python
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt  # Asegúrate de tener un requirements.txt con las dependencias necesarias
+
+    - name: Set up environment variables
+      run: |
+        # Establecer las variables de entorno para la base de datos
+        echo "DB_HOST=localhost" >> $GITHUB_ENV
+        echo "DB_USER=root" >> $GITHUB_ENV
+        echo "DB_PASSWORD=2722" >> $GITHUB_ENV  # Contraseña de MySQL
+        echo "DB_NAME=Bank" >> $GITHUB_ENV  # Nombre de la base de datos
+
+    - name: Run SQL Tests
+      run: |
+        python -m pytest api_tests/test_sql.py --maxfail=1 --disable-warnings -q
+      env:
+        # Pasando las variables de entorno a los tests
+        DB_HOST: localhost
+        DB_USER: root
+        DB_PASSWORD: 2722  # Contraseña de la base de datos
+        DB_NAME: Bank      # Nombre de la base de datos
+
+    - name: Run API Tests
+      run: |
+        python -m pytest api_tests/test_api.py --maxfail=1 --disable-warnings -q
+
+    - name: Generate Allure report
+      run: |
+        pip install allure-pytest
+        pytest --alluredir=allure-results
+        allure serve allure-results  # Esto inicia el servidor Allure localmente en el runner
+
+    - name: Upload Allure report to GitHub Actions
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: allure-report
+        path: allure-results
