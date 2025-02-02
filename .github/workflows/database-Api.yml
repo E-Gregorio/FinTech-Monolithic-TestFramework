@@ -90,7 +90,8 @@ jobs:
       - name: Start API Server
         run: |
           python api_tests/api_test.py &
-          sleep 10
+          sleep 15  # Aumentamos el tiempo de espera
+          curl http://127.0.0.1:5000/api/users || true
         env:
           DB_HOST: 127.0.0.1
           DB_USER: root
