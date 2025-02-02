@@ -9,7 +9,7 @@ load_dotenv()
 
 def get_db_connection():
     return pymysql.connect(
-        host=os.getenv("DB_HOST", "localhost"),
+        host=os.getenv("DB_HOST", "127.0.0.1"),
         user=os.getenv("DB_USER", "root"),
         password=os.getenv("DB_PASSWORD", "2722"),
         database=os.getenv("DB_NAME", "bank"),
