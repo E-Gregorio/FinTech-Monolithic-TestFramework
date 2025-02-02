@@ -75,8 +75,8 @@ jobs:
 
       - name: Set up database schema
         run: |
-          mysql -h 127.0.0.1 -P 3306 -u root -p${{ secrets.DB_PASSWORD }} bank < database/schema.sql
-        continue-on-error: true
+          mysql -h 127.0.0.1 -u root -p${{ secrets.DB_PASSWORD }} bank < database/schema.sql
+          python db-tests/generate_data.py
 
       - name: Run Database Tests
         run: |
@@ -90,7 +90,7 @@ jobs:
       - name: Start API Server
         run: |
           python api_tests/api_test.py &
-          sleep 5
+          sleep 10
         env:
           DB_HOST: 127.0.0.1
           DB_USER: root
