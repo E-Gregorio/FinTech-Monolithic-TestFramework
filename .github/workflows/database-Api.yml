@@ -1,0 +1,95 @@
+name: Python CI/CD Pipeline with MySQL and API Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: bank
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pymysql
+          pip install flask
+
+      - name: Set up database schema
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -u root -p${{ secrets.DB_PASSWORD }} bank < database/schema.sql
+        continue-on-error: true
+
+      - name: Start API Server
+        run: |
+          python api_tests/api_test.py &
+          sleep 5
+        env:
+          DB_HOST: localhost
+          DB_USER: root
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: bank
+
+      - name: Run Database Tests
+        run: |
+          pytest db-tests/tests/tests_query.py --alluredir=allure-results -v
+        env:
+          DB_HOST: localhost
+          DB_USER: root
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: bank
+
+      - name: Run API Tests
+        run: |
+          pytest api_tests/test_api.py --alluredir=allure-results -v
+        env:
+          DB_HOST: localhost
+          DB_USER: root
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: bank
+
+      - name: Generate Allure Report
+        if: always()
+        run: |
+          allure generate allure-results -o allure-report --clean
+
+      - name: Upload Allure Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-report
+          path: allure-report
+
+      - name: Deploy Allure Report to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-report

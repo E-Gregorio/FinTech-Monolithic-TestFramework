@@ -3,20 +3,18 @@
 
 # **FinTech Monolithic Test Framework**
 
-Este repositorio contiene un framework de pruebas para un proyecto de FinTech utilizando tecnologías como **Playwright** para pruebas E2E y **Pytest** para la validación de datos en una base de datos MySQL.
+Este repositorio contiene un framework de pruebas para un proyecto de FinTech utilizando tecnologías como y **Pytest** para la validación de datos en una base de datos MySQL. y API
 
 ## **Requisitos previos**
 
-- **Node.js** y **npm** instalados para ejecutar Playwright.
+
 - **Python** 3.x instalado para ejecutar las pruebas de Pytest.
 - **MySQL** como base de datos para las pruebas de validación de datos.
 - **Docker** (opcional) si necesitas levantar la base de datos MySQL en un contenedor.
 
 ## **Configuración del entorno**
 
-### 1. **Instalación de dependencias**
 
-#### Playwright (Para pruebas E2E):
 
 ```bash
 # Para instalar las dependencias de Playwright
@@ -92,32 +90,7 @@ for _ in range(20):
 connection.close()
 ```
 
-### 5. **Pruebas de Playwright**
 
-#### 5.1 **Comando para ejecutar las pruebas E2E**
-
-```bash
-# Ejecutar las pruebas de Playwright (navegación y validación en la página de Parabank)
-npx playwright test e2e/tests/tests/navigate.test.ts
-```
-
-#### 5.2 **Ejemplo de prueba en Playwright**
-
-```typescript
-import { test, expect } from '@playwright/test';
-
-test('Navegar a la página de Parabank y cerrarla', async ({ page }) => {
-  // Abre la página de Parabank
-  await page.goto('https://parabank.parasoft.com/parabank/index.htm');
-
-  // Verifica que el título de la página sea el esperado
-  const pageTitle = page.getByRole('img', { name: 'ParaBank' })
-  await expect(pageTitle).toBeVisible();
-
-  // Cierra la página al final de la prueba
-  await page.close();
-});
-```
 
 ### 6. **Pruebas de base de datos con Pytest**
 

@@ -1,37 +1,35 @@
 from flask import Flask, jsonify, request
-import mysql.connector
+import pymysql
 import os
 from dotenv import load_dotenv
 
-# Cargar variables de entorno
 load_dotenv()
 
-# Crear la aplicación Flask
 app = Flask(__name__)
 
-# Función para obtener la conexión a la base de datos MySQL
 def get_db_connection():
-    return mysql.connector.connect(
+    return pymysql.connect(
         host=os.getenv("DB_HOST", "localhost"),
         user=os.getenv("DB_USER", "root"),
         password=os.getenv("DB_PASSWORD", "2722"),
-        database=os.getenv("DB_NAME", "bank")
+        database=os.getenv("DB_NAME", "bank"),
+        charset='utf8mb4',
+        cursorclass=pymysql.cursors.DictCursor  # Esto devolverá diccionarios
     )
 
-# Endpoint para obtener los usuarios
 @app.route('/api/users', methods=['GET'])
 def get_users():
-    connection = get_db_connection()
-    cursor = connection.cursor()
-    
-    cursor.execute("SELECT id_cliente, nombre FROM clientes")
-    users = cursor.fetchall()
-    
-    connection.close()
-    
-    # Retornar los usuarios como JSON
-    return jsonify({"users": users})
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT id_cliente, nombre FROM clientes")
+            users = cursor.fetchall()
+        return jsonify({"users": users}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if 'connection' in locals():
+            connection.close()
 
-# Iniciar la aplicación
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
