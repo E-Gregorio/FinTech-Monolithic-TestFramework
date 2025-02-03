@@ -39,6 +39,15 @@ jobs:
         with:
           python-version: '3.13'
 
+      - name: Verify File Structure
+        run: |
+          echo "Listing main directory:"
+          ls -la
+          echo "Listing db-tests directory:"
+          ls -la db-tests/
+          echo "Checking if schema.sql exists:"
+          test -f db-tests/schema.sql && echo "schema.sql exists" || echo "schema.sql not found"
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -49,10 +58,10 @@ jobs:
           pip install flask
           pip install requests==2.28.1
           pip install python-dotenv
+          pip install mysql-connector-python
 
       - name: Verify MySQL connection
         run: |
-          pip install mysql-connector-python
           python -c "
           import pymysql
           import os
@@ -75,12 +84,17 @@ jobs:
 
       - name: Set up database schema
         run: |
-          mysql -h 127.0.0.1 -u root -p${{ secrets.DB_PASSWORD }} bank < database/schema.sql
+          mysql -h 127.0.0.1 -u root -p${{ secrets.DB_PASSWORD }} bank < db-tests/schema.sql
           python db-tests/generate_data.py
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: bank
 
       - name: Run Database Tests
         run: |
-          PYTHONPATH=$PYTHONPATH:$(pwd) pytest db-tests/tests/tests_query.py -v
+          PYTHONPATH=$PYTHONPATH:$(pwd) pytest db-tests/tests/tests_query.py -v --alluredir=allure-results
         env:
           DB_HOST: 127.0.0.1
           DB_USER: root
@@ -89,9 +103,12 @@ jobs:
 
       - name: Start API Server
         run: |
+          echo "Starting API server..."
           python api_tests/api_test.py &
-          sleep 15  # Aumentamos el tiempo de espera
-          curl http://127.0.0.1:5000/api/users || true
+          echo "Waiting for server to start..."
+          sleep 15
+          echo "Checking server status..."
+          curl -v http://127.0.0.1:5000/api/users || true
         env:
           DB_HOST: 127.0.0.1
           DB_USER: root
@@ -100,7 +117,7 @@ jobs:
 
       - name: Run API Tests
         run: |
-          PYTHONPATH=$PYTHONPATH:$(pwd) pytest api_tests/test_api.py -v
+          PYTHONPATH=$PYTHONPATH:$(pwd) pytest api_tests/test_api.py -v --alluredir=allure-results
         env:
           DB_HOST: 127.0.0.1
           DB_USER: root
@@ -110,7 +127,6 @@ jobs:
       - name: Generate Allure Report
         if: always()
         run: |
-          pytest --alluredir=allure-results
           allure generate allure-results -o allure-report --clean
 
       - name: Deploy to GitHub Pages
