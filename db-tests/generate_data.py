@@ -20,7 +20,7 @@ def generate_fake_client():
     return {
         'nombre': fake.name(),
         'direccion': fake.address(),
-        'telefono': fake.phone_number(),
+        'telefono': fake.phone_number()[:15],
         'email': fake.email()
     }
 
