@@ -3,9 +3,6 @@
 # Archivos de entorno
 .env
 
-# Archivos específicos de la base de datos y generación de datos
-db-tests/generate_data.py
-
 # Resultados de Allure (solo si usas Allure como reporte)
 allure-results/
 
