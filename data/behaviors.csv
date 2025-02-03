@@ -1,0 +1,3 @@
+"Epic","Feature","Story","FAILED","BROKEN","PASSED","SKIPPED","UNKNOWN"
+"API Testing Framework","User Management API","Verificar que el código de estado sea 200 al obtener usuarios","0","0","1","0","0"
+"","Cliente","Listado de Clientes","0","0","1","0","0"

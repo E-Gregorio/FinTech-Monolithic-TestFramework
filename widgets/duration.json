@@ -1,0 +1,1 @@
+[{"uid":"389da54b5fea0e0f","name":"Test: Verificar respuesta exitosa con código de estado 200","time":{"start":1738592632523,"stop":1738592632528,"duration":5},"status":"passed","severity":"critical"},{"uid":"c67f70f0c855b1e3","name":"test_get_all_users","time":{"start":1738592612026,"stop":1738592612027,"duration":1},"status":"passed","severity":"normal"}]

@@ -1,0 +1,3 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"passed","Mon Feb 03 14:23:52 UTC 2025","Mon Feb 03 14:23:52 UTC 2025","5","api_tests","test_api","TestRecurso","","","Test: Verificar respuesta exitosa con código de estado 200",""
+"passed","Mon Feb 03 14:23:32 UTC 2025","Mon Feb 03 14:23:32 UTC 2025","1","db-tests.tests","tests_query","","","","test_get_all_users",""
