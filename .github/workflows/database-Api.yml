@@ -59,6 +59,7 @@ jobs:
           pip install requests==2.28.1
           pip install python-dotenv
           pip install mysql-connector-python
+          pip install faker
 
       - name: Verify MySQL connection
         run: |
