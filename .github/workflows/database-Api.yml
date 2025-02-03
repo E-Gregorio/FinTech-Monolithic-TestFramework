@@ -51,7 +51,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest==8.3.4
+          pip install pytest==7.4.3         # Cambiar a una versión más estable
           pip install allure-pytest==2.13.2
           pip install pymysql
           pip install cryptography
